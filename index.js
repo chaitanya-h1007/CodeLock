@@ -40,4 +40,4 @@ setInterval(() => {
         `Time left: ${m}:${s.toString().padStart(2, "0")}`;
     }
   );
-}, 1000);
+}, 1500);

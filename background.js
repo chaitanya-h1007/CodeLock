@@ -60,9 +60,21 @@ function unlock() {
 }
 
 // Tab switch blocking
+
 chrome.tabs.onActivated.addListener((activeInfo) => {
-  if (lockedTabId && activeInfo.tabId !== lockedTabId) {
-    console.log("Blocked tab switch");
-    chrome.tabs.update(lockedTabId, { active: true });
-  }
+  if (!lockedTabId || activeInfo.tabId === lockedTabId) return;
+
+  chrome.tabs.get(activeInfo.tabId, (tab) => {
+    if (tab.url && tab.url.startsWith("chrome://")) return;
+
+    chrome.tabs.update(lockedTabId, { active: true })
+      .catch(() => {});
+  });
 });
+
+
+
+function isChromeInternalTab(tabId) {
+  return chrome.tabs.get(tabId)
+    .then(tab => tab.url.startsWith("chrome://"));
+}
